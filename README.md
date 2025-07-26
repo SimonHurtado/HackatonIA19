@@ -1,12 +1,30 @@
-# React + Vite
+# Chatbot INGELEAN – Hackatón Grupo 19
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este proyecto es un asistente virtual inteligente diseñado para mejorar la atención al cliente de INGELEAN S.A.S., una empresa ubicada en Pereira, especializada en automatización industrial, desarrollo de software e inteligencia artificial.
 
-Currently, two official plugins are available:
+El asistente responde preguntas frecuentes, ofrece soporte básico y guía a los clientes según el contexto de negocio.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## Funcionalidades
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Interfaz moderna y responsiva con React + Tailwind CSS
+- Integración con modelos de lenguaje mediante OpenRouter API
+- Limitación de temas a lo relacionado con INGELEAN
+- Soporte para múltiples turnos de conversación
+- Respuestas en tiempo real con animación de carga
+
+---
+
+## Tecnologías utilizadas
+
+| Herramienta         | Propósito                          |
+|---------------------|------------------------------------|
+| React + Vite        | Frontend ligero y rápido           |
+| Tailwind CSS        | Estilos modernos y responsive      |
+| OpenRouter API      | Motor de IA gratuito               |
+| Lucide React        | Iconos para interfaz               |
+
+---
+
+## Instrucciones de desarrollo
