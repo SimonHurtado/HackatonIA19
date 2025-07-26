@@ -29,3 +29,7 @@ El asistente responde preguntas frecuentes, ofrece soporte básico y guía a los
 
 Archivos Word y PowerPoint
 https://drive.google.com/drive/folders/1MPsnEUz_KMIBYOqCl6-F4DBXsCivrOa3
+
+
+Video:
+https://drive.google.com/file/d/1bVuCtfXVuM6b8RAyMINIaOpBbVLyuIOY/view?usp=drive_link
