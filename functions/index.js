@@ -3,7 +3,7 @@ const logger = require("firebase-functions/logger");
 const cors = require("cors")({ origin: true });
 
 
-const OPENROUTER_API_KEY = "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";
+const OPENROUTER_API_KEY = "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";
 
 const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
