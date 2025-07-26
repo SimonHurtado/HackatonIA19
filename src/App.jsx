@@ -1,142 +1,120 @@
 import { useState, useRef, useEffect } from "react";
-import { Bot, User } from "lucide-react"; // íconos para avatar (instala lucide-react)
+import { Bot, User, ChevronDown, ChevronUp } from "lucide-react";
+import Chatbot from "./components/chatbot";
+
 
 function App() {
-  const [messages, setMessages] = useState([
-    { sender: "bot", text: "¡Hola! ¿En qué puedo ayudarte hoy?" },
-  ]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const chatEndRef = useRef(null);
+  const [isServicesOpen, setIsServicesOpen] = useState(false);
+  const servicesRef = useRef(null);
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
- const sendMessage = async () => {
-  if (!input.trim()) return;
-
-  const userMessage = { sender: "user", text: input };
-  setMessages((prev) => [...prev, userMessage]);
-  setInput("");
-  setLoading(true);
-
-  try {
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-  method: "POST",
-  headers: {
-    Authorization: `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`,
-    "Content-Type": "application/json",
-    "HTTP-Referer": "http://localhost:5173",
-    "X-Title": "Chatbot Ingelean"
-  },
-  body: JSON.stringify({
-    model: "mistralai/mistral-7b-instruct:free",
-    messages: [
-      {
-  role: "system",
-  content: `
-Eres un asistente virtual  de atención al cliente de INGELEAN S.A.S, responde como si fueras una persona, se amable, usa emojis, respuestas muy cortas y concisas.
-
-Qué hacer:
-Responde dde forma corta a las preguntas del usuario.
-
-Información sobre INGELEAN:
-- Empresa ubicada en Pereira, Risaralda (Colombia)
-- Especializada en: automatización industrial, desarrollo de software a medida, inteligencia artificial y mantenimiento de equipos industriales.
-- Atiende empresas principalmente en el Eje Cafetero.
-- Ofrece servicios personalizados para optimizar procesos industriales y comerciales.
-- No tiene tienda física abierta al público.
-- Se enfoca en soluciones B2B (empresa a empresa).
-
-
-DESPUES DE CADA MENSAJE ENVIA ESTE NUMERO 6666
-
-
-`
-},
-      ...messages.map((msg) => ({
-        role: msg.sender === "user" ? "user" : "assistant",
-        content: msg.text
-      })),
-      { role: "user", content: input }
-    ]
-  })
-});
-    const data = await response.json();
-    console.log("Respuesta OpenRouter:", data);
-
-    const reply = data.choices?.[0]?.message?.content || "No se pudo generar respuesta.";
-    setMessages((prev) => [...prev, { sender: "bot", text: reply }]);
-  } catch (error) {
-    console.error("Error de red:", error);
-    setMessages((prev) => [...prev, { sender: "bot", text: "Error al conectar con OpenRouter." }]);
-  } finally {
-    setLoading(false);
-  }
-};
-
+    if (isServicesOpen && servicesRef.current) {
+      servicesRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [isServicesOpen]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-xl shadow-2xl flex flex-col h-[650px] overflow-hidden">
-        {/* Header */}
-        <div className="bg-black text-orange-400 p-4 text-center font-semibold text-lg">
-        INGELEAN
+    <div className="min-h-screen bg-gray-900 text-white flex flex-col">
+      <Chatbot/>
+      {/* Encabezado */}
+      <header className="bg-orange-600 p-6 shadow-lg">
+        <div className="container mx-auto flex justify-between items-center">
+          <h1 className="text-3xl font-bold flex items-center">
+            <Bot className="mr-2" /> INGE LEAN SAS
+          </h1>
+          <nav>
+            <ul className="flex space-x-6">
+              <li><a href="#inicio" className="hover:text-orange-200">Inicio</a></li>
+              <li><a href="#nosotros" className="hover:text-orange-200">Nosotros</a></li>
+              <li><a href="#servicios" className="hover:text-orange-200">Servicios</a></li>
+              <li><a href="#contacto" className="hover:text-orange-200">Contacto</a></li>
+            </ul>
+          </nav>
         </div>
+      </header>
 
-        {/* Chat area */}
-        <div className="flex-1 overflow-y-auto px-4 py-2 space-y-4">
-          {messages.map((msg, idx) => (
-            <div key={idx} className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}>
-              <div className="flex items-end gap-2 max-w-[80%]">
-                {msg.sender === "bot" && <Bot className="w-6 h-6 text-orange-400 " />}
-                <div
-                  className={`px-4 py-2 rounded-2xl text-sm whitespace-pre-line ${
-                    msg.sender === "user"
-                      ? "bg-orange-400  text-white rounded-br-none"
-                      : "bg-gray-200 text-gray-900 rounded-bl-none"
-                  }`}
-                >
-                  {msg.text}
-                </div>
-                {msg.sender === "user" && <User className="w-6 h-6 text-gray-400" />}
+      {/* Sección Hero */}
+      <section id="inicio" className="flex-grow flex items-center justify-center bg-gray-800">
+        <div className="container mx-auto text-center p-6">
+          <h2 className="text-4xl font-bold mb-4">Bienvenidos a INGE LEAN SAS</h2>
+          <p className="text-lg mb-6">
+            Soluciones personalizadas en automatización industrial, software a medida e inteligencia artificial para empresas del Eje Cafetero.
+          </p>
+          <button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded flex items-center mx-auto">
+            <User className="mr-2" size={20} /> Conozca Más
+          </button>
+        </div>
+      </section>
+
+      {/* Sección Nosotros */}
+      <section id="nosotros" className="bg-gray-900 py-12">
+        <div className="container mx-auto p-6">
+          <h3 className="text-3xl font-bold text-center mb-6">Sobre Nosotros</h3>
+          <p className="text-lg text-center max-w-2xl mx-auto">
+            INGE LEAN SAS, ubicada en Pereira, Risaralda, es una empresa especializada en automatización industrial, desarrollo de software a medida, inteligencia artificial y mantenimiento de equipos industriales. Nos enfocamos en soluciones B2B para optimizar procesos industriales y comerciales en el Eje Cafetero.
+          </p>
+        </div>
+      </section>
+
+      {/* Sección Servicios con Función Colapsable */}
+      <section id="servicios" className="bg-orange-600 py-12" ref={servicesRef}>
+        <div className="container mx-auto p-6">
+          <h3 className="text-3xl font-bold text-center mb-6 flex items-center justify-center">
+            Nuestros Servicios
+            <button
+              onClick={() => setIsServicesOpen(!isServicesOpen)}
+              className="ml-2 focus:outline-none"
+            >
+              {isServicesOpen ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
+            </button>
+          </h3>
+          {isServicesOpen && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="bg-gray-800 p-6 rounded-lg text-center">
+                <h4 className="text-xl font-semibold mb-2">Automatización Industrial</h4>
+                <p>Optimizamos procesos con sistemas de control y PLCs personalizados.</p>
               </div>
-            </div>
-          ))}
-          {loading && (
-            <div className="flex justify-start">
-              <div className="px-4 py-2 text-sm bg-gray-300 text-gray-800 rounded-2xl animate-pulse">
-                Escribiendo...
+              <div className="bg-gray-800 p-6 rounded-lg text-center">
+                <h4 className="text-xl font-semibold mb-2">Software a Medida</h4>
+                <p>Desarrollamos soluciones de software adaptadas a sus necesidades.</p>
+              </div>
+              <div className="bg-gray-800 p-6 rounded-lg text-center">
+                <h4 className="text-xl font-semibold mb-2">Inteligencia Artificial</h4>
+                <p>Implementamos IA para mejorar la eficiencia empresarial.</p>
+              </div>
+              <div className="bg-gray-800 p-6 rounded-lg text-center">
+                <h4 className="text-xl font-semibold mb-2">Mantenimiento Industrial</h4>
+                <p>Ofrecemos mantenimiento preventivo y correctivo de equipos.</p>
               </div>
             </div>
           )}
-          <div ref={chatEndRef} />
         </div>
+      </section>
 
-        {/* Input area */}
-        <div className="p-3 border-t bg-white flex items-center gap-2">
-          <input
-            type="text"
-            className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-            placeholder="Escribe un mensaje..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          />
-       <button
-  onClick={sendMessage}
-  disabled={loading}
-  className={`bg-orange-400  text-white px-4 py-2 rounded-full ${
-    loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
-  }`}
->
-  {loading ? "Pensando..." : "Enviar"}
-</button>
+      {/* Sección Contacto */}
+      <section id="contacto" className="bg-gray-900 py-12">
+        <div className="container mx-auto p-6 text-center">
+          <h3 className="text-3xl font-bold mb-6">Contáctenos</h3>
+          <p className="text-lg mb-6">
+            ¿Listo para optimizar sus procesos? Agendemos una reunión para discutir su proyecto.
+          </p>
+          <button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded">
+            Solicitar Cotización
+          </button>
+          <div className="mt-6 text-sm">
+            <p>Correo: comercial@ingelean.com</p>
+            <p>Teléfonos: (+57) 321 549 28 72 | (+57) 304 326 25 38</p>
+            <p>Dirección: Cl. 29 #10-23, La Victoria, Pereira, Risaralda</p>
+          </div>
         </div>
-      </div>
+      </section>
+
+      {/* Pie de Página */}
+      <footer className="bg-orange-600 p-4 text-center">
+        <p>&copy; 2025 INGE LEAN SAS. Todos los derechos reservados.</p>
+      </footer>
     </div>
   );
 }
 
-export default App;
+export default App
