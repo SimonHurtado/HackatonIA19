@@ -27,4 +27,5 @@ El asistente responde preguntas frecuentes, ofrece soporte básico y guía a los
 
 ---
 
-## Instrucciones de desarrollo
+Archivos Word y PowerPoint
+https://drive.google.com/drive/folders/1MPsnEUz_KMIBYOqCl6-F4DBXsCivrOa3
