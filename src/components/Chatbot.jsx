@@ -161,17 +161,17 @@ function Chatbot() {
             onClick={() => setShowMetrics(!showMetrics)}
             className="flex justify-between items-center bg-gray-100 px-4 py-2 text-sm text-gray-800 hover:bg-gray-200 transition"
           >
-            <span className="font-medium">Métricas del chat</span>
+            <span className="font-medium">Métricas del chat - Dash (Desplegable)</span>
             {showMetrics ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </button>
 
           {showMetrics && (
             <div className="bg-white border-b border-gray-200 px-4 py-2 text-sm text-gray-700">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-2">
-                <div><span className="font-semibold">⏱ Última:</span><div>{metrics.lastResponseTime.toFixed(0)} ms</div></div>
-                <div><span className="font-semibold">💬 Usuario:</span><div>{metrics.totalUserMessages}</div></div>
-                <div><span className="font-semibold">🤖 IA:</span><div>{metrics.totalBotMessages}</div></div>
-                <div><span className="font-semibold">📈 Promedio:</span><div>{metrics.averageResponseTime.toFixed(0)} ms</div></div>
+                <div><span className="font-semibold"> Última:</span><div>{metrics.lastResponseTime.toFixed(0)} ms</div></div>
+                <div><span className="font-semibold"> Usuario:</span><div>{metrics.totalUserMessages}</div></div>
+                <div><span className="font-semibold"> IA:</span><div>{metrics.totalBotMessages}</div></div>
+                <div><span className="font-semibold"> Promedio:</span><div>{metrics.averageResponseTime.toFixed(0)} ms</div></div>
               </div>
               <div className="text-right">
                 <button
@@ -180,6 +180,8 @@ function Chatbot() {
                 >
                   Nueva conversación
                 </button>
+                .
+                 <a href="/admin"  className="text-xs text-blue-500 hover:underline hover:text-blue-600 transition">admin</a>
               </div>
             </div>
           )}
