@@ -7,6 +7,9 @@ import {
   doc,
   serverTimestamp,
   setDoc,
+  getDocs,
+  query,
+  orderBy,
 } from "firebase/firestore";
 
 function Chatbot() {
@@ -14,21 +17,13 @@ function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [conversationId, setConversationId] = useState(null);
 
-  useEffect(() => {
-    const newId = generateId();
-    setConversationId(newId);
-    localStorage.setItem("current-conversation-id", newId);
-  }, []);
-
   const [messages, setMessages] = useState([
     { sender: "bot", text: "¡Hola soy Inge! ¿En qué puedo ayudarte hoy?" },
   ]);
-
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const chatEndRef = useRef(null);
   const [showMetrics, setShowMetrics] = useState(false);
-
   const [metrics, setMetrics] = useState({
     totalUserMessages: 0,
     totalBotMessages: 1,
@@ -36,10 +31,42 @@ function Chatbot() {
     averageResponseTime: 0,
   });
 
+  // 🔄 Scroll automático al nuevo mensaje
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // 📦 Recuperar conversación desde localStorage y Firestore
+  useEffect(() => {
+    const storedId = localStorage.getItem("current-conversation-id");
+    if (storedId) {
+      setConversationId(storedId);
+      loadMessages(storedId);
+    } else {
+      const newId = generateId();
+      setConversationId(newId);
+      localStorage.setItem("current-conversation-id", newId);
+    }
+  }, []);
+
+  // 🔽 Cargar mensajes anteriores
+  const loadMessages = async (convId) => {
+    try {
+      const q = query(
+        collection(db, "conversations", convId, "messages"),
+        orderBy("timestamp", "asc")
+      );
+      const snapshot = await getDocs(q);
+      const loadedMessages = snapshot.docs.map((doc) => doc.data());
+      if (loadedMessages.length > 0) {
+        setMessages(loadedMessages);
+      }
+    } catch (error) {
+      console.error("❌ Error al cargar mensajes:", error);
+    }
+  };
+
+  // 🧠 Guardar mensaje en Firestore
   const saveMessageToFirestore = async (msg, convId) => {
     try {
       await addDoc(collection(db, "conversations", convId, "messages"), {
@@ -51,6 +78,7 @@ function Chatbot() {
     }
   };
 
+  // 📊 Guardar métricas en Firestore
   const saveMetrics = async (metrics, convId) => {
     try {
       await setDoc(
@@ -66,6 +94,7 @@ function Chatbot() {
     }
   };
 
+  // ✉️ Enviar mensaje
   const sendMessage = async () => {
     if (!input.trim()) return;
 
@@ -76,7 +105,6 @@ function Chatbot() {
     setLoading(true);
 
     await saveMessageToFirestore(userMessage, conversationId);
-
     const startTime = performance.now();
 
     try {
@@ -114,7 +142,10 @@ function Chatbot() {
       await saveMetrics(updatedMetrics, conversationId);
     } catch (error) {
       console.error("Error al conectar con la API:", error);
-      const errorMsg = { sender: "bot", text: "Error al conectar con el servidor." };
+      const errorMsg = {
+        sender: "bot",
+        text: "Error al conectar con el servidor.",
+      };
       setMessages((prev) => [...prev, errorMsg]);
       await saveMessageToFirestore(errorMsg, conversationId);
     } finally {
@@ -122,12 +153,16 @@ function Chatbot() {
     }
   };
 
+  // 🔄 Reiniciar conversación
   const resetConversation = () => {
     const newId = generateId();
     setConversationId(newId);
     localStorage.setItem("current-conversation-id", newId);
 
-    const initialMsg = { sender: "bot", text: "¡Hola soy Inge Bot! ¿En qué puedo ayudarte hoy?" };
+    const initialMsg = {
+      sender: "bot",
+      text: "¡Hola soy Inge Bot! ¿En qué puedo ayudarte hoy?",
+    };
     setMessages([initialMsg]);
     setMetrics({
       totalUserMessages: 0,
@@ -151,7 +186,7 @@ function Chatbot() {
       {isOpen && (
         <div className="w-80 sm:w-96 h-[600px] bg-white rounded-xl shadow-xl flex flex-col overflow-hidden border border-gray-300">
           <div className="bg-black text-orange-400 p-3 font-semibold flex justify-between items-center">
-            INGELEAN
+            Inge BOT
             <button onClick={() => setIsOpen(false)}>
               <X className="w-5 h-5 text-white hover:text-red-500" />
             </button>
@@ -168,10 +203,15 @@ function Chatbot() {
           {showMetrics && (
             <div className="bg-white border-b border-gray-200 px-4 py-2 text-sm text-gray-700">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-2">
-                <div><span className="font-semibold"> Última:</span><div>{metrics.lastResponseTime.toFixed(0)} ms</div></div>
-                <div><span className="font-semibold"> Usuario:</span><div>{metrics.totalUserMessages}</div></div>
-                <div><span className="font-semibold"> IA:</span><div>{metrics.totalBotMessages}</div></div>
-                <div><span className="font-semibold"> Promedio:</span><div>{metrics.averageResponseTime.toFixed(0)} ms</div></div>
+                <div>
+                  <span className="font-semibold">Última:</span>
+                  <div>{metrics.lastResponseTime.toFixed(0)} ms</div>
+                </div>
+               
+                <div>
+                  <span className="font-semibold">Promedio:</span>
+                  <div>{metrics.averageResponseTime.toFixed(0)} ms</div>
+                </div>
               </div>
               <div className="text-right">
                 <button
@@ -180,8 +220,12 @@ function Chatbot() {
                 >
                   Nueva conversación
                 </button>
-                .
-                 <a href="/admin"  className="text-xs text-blue-500 hover:underline hover:text-blue-600 transition">admin</a>
+                <a
+                  href="/admin"
+                  className="ml-4 text-xs text-blue-500 hover:underline hover:text-blue-600 transition"
+                >
+                  admin
+                </a>
               </div>
             </div>
           )}
